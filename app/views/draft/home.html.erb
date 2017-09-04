@@ -1,6 +1,10 @@
 <script>
     $(document).ready(function () {
 
+        function replaceSpot(spot) {
+
+        }
+
         $('ol.players li').on("dragstart", function (event) {
             var dt = event.originalEvent.dataTransfer;
             dt.setData('pick', $(this).attr("id"));

@@ -9,7 +9,7 @@
 #  updated_at     :datetime         not null
 #
 
-class FantasyTeam < ActiveRecord::Base
+class FantasyTeam < ApplicationRecord
     has_many :rosters
 
 

@@ -10,11 +10,11 @@
 #  updated_at :datetime         not null
 #
 
-class RosterSpot < ActiveRecord::Base
+class RosterSpot < ApplicationRecord
     serialize :position
 
     belongs_to :roster
-    belongs_to :player
+    belongs_to :player, optional: true
 
     validate :correct_position
     validates_uniqueness_of :player_id, allow_blank: true

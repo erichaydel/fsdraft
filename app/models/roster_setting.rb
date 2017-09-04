@@ -8,7 +8,7 @@
 #  updated_at :datetime         not null
 #
 
-class RosterSetting < ActiveRecord::Base
+class RosterSetting < ApplicationRecord
     serialize :definition
     before_save :check_keys
     KEYS = [:NHL, :MLB, :NBA, :NFL]

@@ -16,7 +16,7 @@
 #  updated_at    :datetime         not null
 #
 
-class Player < ActiveRecord::Base
+class Player < ApplicationRecord
     serialize :position
     belongs_to :roster_spot
     validates :firstname, :lastname, :team, presence: true

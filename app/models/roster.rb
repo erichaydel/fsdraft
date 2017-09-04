@@ -9,7 +9,7 @@
 #  updated_at      :datetime         not null
 #
 
-class Roster < ActiveRecord::Base
+class Roster < ApplicationRecord
     belongs_to :fantasy_team
     has_many :roster_spots
     after_create :generate_roster_spots
