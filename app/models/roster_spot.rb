@@ -1,10 +1,23 @@
+# == Schema Information
+#
+# Table name: roster_spots
+#
+#  id         :integer          not null, primary key
+#  position   :text
+#  roster_id  :integer
+#  player_id  :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 class RosterSpot < ActiveRecord::Base
     serialize :position
 
     belongs_to :roster
-    belongs_to :player, unique: true
+    belongs_to :player
 
     validate :correct_position
+    validates_uniqueness_of :player_id, allow_blank: true
 
     def correct_position
         if player
@@ -17,9 +30,17 @@ class RosterSpot < ActiveRecord::Base
         end
     end
 
+    def pos
+        position.join("/")
+    end
+
     def to_h
         pos = position.join("/")
-        { "#{pos}":player.pretty }
+        if player
+            { "#{pos}": player.pretty }
+        else
+            { "#{pos}": "Empty"}
+        end
     end
 
 end

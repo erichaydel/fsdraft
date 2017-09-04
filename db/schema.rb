@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170830225126) do
+ActiveRecord::Schema.define(version: 20170831181508) do
 
   create_table "fantasy_teams", force: :cascade do |t|
     t.string   "name"
@@ -35,6 +35,12 @@ ActiveRecord::Schema.define(version: 20170830225126) do
   end
 
   add_index "players", ["firstname", "lastname", "team", "type"], name: "index_players_on_firstname_and_lastname_and_team_and_type", unique: true
+
+  create_table "roster_settings", force: :cascade do |t|
+    t.text     "definition", default: "---\n:NFL: []\n:NHL: []\n:NBA: []\n:MLB: []\n"
+    t.datetime "created_at",                                                           null: false
+    t.datetime "updated_at",                                                           null: false
+  end
 
   create_table "roster_spots", force: :cascade do |t|
     t.text     "position"

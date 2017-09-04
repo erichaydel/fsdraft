@@ -1,0 +1,8 @@
+<ol class="roster">
+    <% roster.roster_spots.each do |spot| %>
+        <li>
+            <div><%= spot.position.join("/") %></div>
+            <div class="small-player"><%= spot.player.pretty if spot.player %></div>
+        </li>
+    <% end %>
+</ol>

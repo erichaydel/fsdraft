@@ -1,0 +1,79 @@
+<h1>Editing Roster Setting</h1>
+
+<% select_options = {NFL:
+                      ['QB','RB', 'WR', 'RB/WR', 'RB/WR/TE','TE', 'K', 'DST', 'RB/WR/TE/K', 'RB/WR/TE/QB/K'],
+                     MLB:
+                      ['SP/RP', 'C', '1B', '2B', 'SS', '3B','1B/3B', '2B/SS', 'RF', 'LF', 'CF', 'SP', 'RP'],
+                     NBA:
+                      ['PG', 'SG', 'SF', 'PF', 'C', 'PG/SG', 'SF/PF', 'PG/SG/SF/PF/C'],
+                     NHL:
+                      ['LW', 'RW', 'D', 'C', 'G', 'LW/RW', 'LW/RW/D/C']}.with_indifferent_access
+                       %>
+
+<script>
+  $(document).ready(function() {
+    var add_button      = $(".add_form_field");
+
+    var x = 1;
+
+    <%# Add the collections, and select them later %>
+    <% select_options.keys.each_with_index do |key| %>
+      var collection<%= key %> = `<%= select_tag "roster_setting[definition][#{key}][]", options_from_collection_for_select(select_options[key], "to_s", "to_s", select_options[key][0]) %>`
+    <% end %>
+
+    $(add_button).click(function(e){
+      e.preventDefault();
+
+      var select = eval('collection' + e.target.dataset.key);
+
+      x++;
+      $(e.target).prev('ol').append(`
+        <div class="field">
+           <li>` + select + `<button type=button class="delete">x</button></li>
+        </div>`); //add input box
+    });
+
+    $(document).on("click",".delete", function(e){
+        e.preventDefault(); $(this).parent('li').parent('div').remove(); x--;
+    })
+});
+</script>
+
+<%= form_for(@roster_setting) do |f| %>
+  <% if @roster_setting.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@roster_setting.errors.count, "error") %> prohibited this roster_setting from being saved:</h2>
+
+      <ul>
+      <% @roster_setting.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <% @roster_setting.definition.keys.each_with_index do |key| %>
+      <ol id="<%= key %>">
+        <h2><%= key %></h2>
+        <% @roster_setting.definition[key.to_sym].each do |spot| %>
+          <div class="field">
+            <li>
+              <%= select_tag "roster_setting[definition][#{key}][]", options_from_collection_for_select(select_options[key], "to_s", "to_s", spot)%>
+              <button type=button class="delete">x</button>
+            </li>
+          </div>
+        <% end %>
+      </ol>
+      <button type=button class="add_form_field" data-key="<%= key %>">Add New Field &nbsp; <span style="font-size:16px; font-weight:bold;">+ </span></button>
+    <% end %>
+  </div>
+
+
+  <hr>
+  <br>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
