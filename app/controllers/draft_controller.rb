@@ -13,6 +13,7 @@ class DraftController < ApplicationController
     resp, message = team.add_player(player)
     respond_to do |format|
       if resp
+        ActionCable.server.broadcast 'pick', id: player.html_id, pick: pick
         player.update(draft_number: pick)
         format.json { render json: {"success": "ok", "spot": resp.pos, "player": resp.player.pretty, "team": team.id}, status: :ok }
       else

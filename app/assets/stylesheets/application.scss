@@ -27,28 +27,63 @@ table {
     table-layout: fixed;
 }
 
+th {
+    border: 0px solid black !important;
+    text-align: center !important;
+    font-weight: bold;
+}
+
 td {
     height:100px;
-    border: 1px solid black;
+    border: 1px solid black !important;
     width: 100%;
     text-align: center;
-    padding: 20px;
+    vertical-align: center;
+}
 
-    &.NFL {
-        background: #F1A9A0;
-    }
+.NFL {
+    background: #F1A9A0;
+}
 
-    &.MLB {
-        background: #89C4F4;
-    }
+.MLB {
+    background: #89C4F4;
+}
 
-    &.NBA {
-        background: #A2DED0;
-    }
+.NBA {
+    background: #A2DED0;
+}
 
-    &.NHL {
-        background: #FDE3A7;
-    }
+.NHL {
+    background: #FDE3A7;
+}
+
+@mixin calc($property, $expression) {
+  #{$property}: -moz-calc(#{$expression});
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
+
+.draft-table {
+    @include calc('height', '100vh - 52px');
+    overflow-y: auto;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.draft-list {
+    @include calc('height', '100vh - 90px');
+    overflow-y: auto;
+    margin-right: -15px;
+    margin-left: -15px;
+    padding: 5px;
+}
+
+#team-tab {
+    padding: 10px;
+}
+
+nav.navbar {
+    margin-bottom: 0px;
 }
 
 .lastname {

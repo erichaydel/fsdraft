@@ -1,8 +1,11 @@
 <script>
     $(document).ready(function () {
 
-        function replaceSpot(spot) {
-
+        function replaceSpot(td, li) {
+            td.html(li.html());
+            td.addClass(li.attr('class'));
+            td.prop('disabled', true);
+            li.remove();
         }
 
         $('ol.players li').on("dragstart", function (event) {
@@ -14,7 +17,6 @@
         $('table td').on("dragenter dragover drop", function (event) {
             event.preventDefault();
             if (event.type === 'drop' && $(this).prop('disabled') != true) {
-            console.log(event)
                 var pick = $("#" + event.originalEvent.dataTransfer.getData('pick'));
                 var url = "<%= draft_pick_path %>"
                 var td = $(this);
@@ -26,10 +28,6 @@
                             "authenticity_token":"<%= form_authenticity_token %>"}, // serializes the form's elements.
                     success: function(data) {
                         console.log(data);
-                        td.html($(pick).html());
-                        td.addClass($(pick).attr('class'));
-                        td.prop('disabled', true);
-                        $(pick).remove();
                     },
                     error: function(data) {
                         console.log(data)
@@ -43,26 +41,28 @@
 
 <div class="row">
     <div class="col-lg-9">
-        <table class="table">
-            <tr>
-                <% FantasyTeam.all.order(:draft_position).each do |team| %>
-                    <th><%= team.name %></th>
-                <% end %>
-            </tr>
-            <% (1..@settings.total_picks).to_a.in_groups_of(@num_teams).each_with_index do |picks, idx| %>
+        <div class="draft-table">
+            <table class="table">
                 <tr>
-                    <% picks.reverse! if idx.odd? %>
-                    <% picks.each do |pick| %>
-                        <% if @drafted_players.keys.include?(pick) %>
-                            <% player = @drafted_players[pick] %>
-                            <td id="pick-<%= pick %>" class="<%= player.sport %>"> <%= raw player.pretty_html %></td>
-                        <% else %>
-                            <td id="pick-<%= pick %>"><%= pick %></td>
-                        <% end %>
+                    <% FantasyTeam.all.order(:draft_position).each do |team| %>
+                        <th><%= team.name %></th>
                     <% end %>
                 </tr>
-            <% end %>
-        </table>
+                <% (1..@settings.total_picks).to_a.in_groups_of(@num_teams).each_with_index do |picks, idx| %>
+                    <tr>
+                        <% picks.reverse! if idx.odd? %>
+                        <% picks.each do |pick| %>
+                            <% if @drafted_players.keys.include?(pick) %>
+                                <% player = @drafted_players[pick] %>
+                                <td id="pick-<%= pick %>" class="<%= player.sport %>"> <%= raw player.pretty_html %></td>
+                            <% else %>
+                                <td id="pick-<%= pick %>"><%= pick %></td>
+                            <% end %>
+                        <% end %>
+                    </tr>
+                <% end %>
+            </table>
+        </div>
     </div>
     <div class="col-lg-3">
         <ul class="nav nav-pills">
@@ -70,62 +70,55 @@
             <li><a data-toggle="tab" href="#nba-players">NBA</a></li>
             <li><a data-toggle="tab" href="#mlb-players">MLB</a></li>
             <li><a data-toggle="tab" href="#nhl-players">NHL</a></li>
-            <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Teams
-                <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a data-toggle="tab" href="#team-nfl">NFL</a></li>
-                    <li><a data-toggle="tab" href="#team-nba">NBA</a></li>
-                    <li><a data-toggle="tab" href="#team-mlb">MLB</a></li>
-                    <li><a data-toggle="tab" href="#team-nhl">NHL</a></li>
-                </ul>
-            </li>
+            <li><a data-toggle="tab" href="#team-tab">My Team</a></li>
         </ul>
-        <div class="tab-content">
-            <div id="nfl-players" class="tab-pane fade in active">
-                <ol class="players">
-                    <% FootballPlayer.where(draft_number: nil).all.each do |player| %>
-                        <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
+        <div class="draft-list">
+            <div class="tab-content">
+                <div id="nfl-players" class="tab-pane fade in active">
+                    <ol class="players">
+                        <% FootballPlayer.where(draft_number: nil).all.each do |player| %>
+                            <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
 
-                    <% end %>
-                </ol>
-            </div>
-            <div id="nba-players" class="tab-pane fade">
-                <ol class="players">
-                    <% BasketballPlayer.where(draft_number: nil).all.each do |player| %>
-                        <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
+                        <% end %>
+                    </ol>
+                </div>
+                <div id="nba-players" class="tab-pane fade">
+                    <ol class="players">
+                        <% BasketballPlayer.where(draft_number: nil).all.each do |player| %>
+                            <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
 
-                    <% end %>
-                </ol>
-            </div>
-            <div id="mlb-players" class="tab-pane fade">
-                <ol class="players">
-                    <% BaseballPlayer.where(draft_number: nil).all.each do |player| %>
-                        <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
+                        <% end %>
+                    </ol>
+                </div>
+                <div id="mlb-players" class="tab-pane fade">
+                    <ol class="players">
+                        <% BaseballPlayer.where(draft_number: nil).all.each do |player| %>
+                            <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
 
-                    <% end %>
-                </ol>
-            </div>
-            <div id="nhl-players" class="tab-pane fade">
-                <ol class="players">
-                    <% HockeyPlayer.where(draft_number: nil).all.each do |player| %>
-                        <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
+                        <% end %>
+                    </ol>
+                </div>
+                <div id="nhl-players" class="tab-pane fade">
+                    <ol class="players">
+                        <% HockeyPlayer.where(draft_number: nil).all.each do |player| %>
+                            <li draggable="true" id="<%=player.html_id%>" class="<%= player.sport %>" data-db-id="<%= player.id %>"><%= raw player.pretty_html %></li>
 
-                    <% end %>
-                </ol>
-            </div>
-            <div id="team-nfl" class="tab-pane fade">
-                <h2>NFL</h2>
-                <%= render 'team', roster: FantasyTeam.first.roster("NFL") %>
-                <hr>
-                <h2>NBA</h2>
-                <%= render 'team', roster: FantasyTeam.first.roster("NBA") %>
-                <hr>
-                <h2>MLB</h2>
-                <%= render 'team', roster: FantasyTeam.first.roster("MLB") %>
-                <hr>
-                <h2>NHL</h2>
-                <%= render 'team', roster: FantasyTeam.first.roster("NHL") %>
+                        <% end %>
+                    </ol>
+                </div>
+                <div id="team-tab" class="tab-pane fade">
+                    <h2>NFL</h2>
+                    <%= render 'team', roster: FantasyTeam.first.roster("NFL") %>
+                    <hr>
+                    <h2>NBA</h2>
+                    <%= render 'team', roster: FantasyTeam.first.roster("NBA") %>
+                    <hr>
+                    <h2>MLB</h2>
+                    <%= render 'team', roster: FantasyTeam.first.roster("MLB") %>
+                    <hr>
+                    <h2>NHL</h2>
+                    <%= render 'team', roster: FantasyTeam.first.roster("NHL") %>
+                </div>
             </div>
         </div>
     </div>

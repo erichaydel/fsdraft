@@ -18,7 +18,6 @@
 
 class Player < ApplicationRecord
     serialize :position
-    belongs_to :roster_spot
     validates :firstname, :lastname, :team, presence: true
     validates_uniqueness_of :firstname, scope: [:lastname, :team, :type]
 
