@@ -11,7 +11,7 @@
 
 class Roster < ApplicationRecord
     belongs_to :fantasy_team
-    has_many :roster_spots
+    has_many :roster_spots, dependent: :destroy
     after_create :generate_roster_spots
 
     def add_player(player)
@@ -28,16 +28,22 @@ class Roster < ApplicationRecord
          roster: roster_spots.map(&:to_h) }
     end
 
-    private
+    def positions_available
+        roster_spots.map(&:position).flatten.uniq
+    end
+
 
     def find_next_roster_spot(position)
         roster_spots.each do |spot|
-            if spot.position & position != [] and !spot.player
+            if spot.position_overlap(position) and !spot.player
                 return spot
             end
+            puts spot.position
+            puts position
         end
         return nil
     end
+    private
 
     def generate_roster_spots
         settings = RosterSetting.last

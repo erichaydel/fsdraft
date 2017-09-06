@@ -10,7 +10,7 @@
 #
 
 class FantasyTeam < ApplicationRecord
-    has_many :rosters
+    has_many :rosters, dependent: :destroy
 
 
     SPORTS = ["NFL", "MLB", "NHL", "NBA"]
