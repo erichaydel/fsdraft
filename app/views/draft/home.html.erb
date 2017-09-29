@@ -70,7 +70,9 @@
             <li><a data-toggle="tab" href="#nba-players">NBA</a></li>
             <li><a data-toggle="tab" href="#mlb-players">MLB</a></li>
             <li><a data-toggle="tab" href="#nhl-players">NHL</a></li>
-            <li><a data-toggle="tab" href="#team-tab">My Team</a></li>
+            <% if user_signed_in? %>
+                <li><a data-toggle="tab" href="#team-tab">My Team</a></li>
+            <% end %>
         </ul>
         <div class="draft-list">
             <div class="tab-content">
@@ -106,19 +108,21 @@
                         <% end %>
                     </ol>
                 </div>
-                <div id="team-tab" class="tab-pane fade">
-                    <h2>NFL</h2>
-                    <%= render 'team', roster: FantasyTeam.first.roster("NFL") %>
-                    <hr>
-                    <h2>NBA</h2>
-                    <%= render 'team', roster: FantasyTeam.first.roster("NBA") %>
-                    <hr>
-                    <h2>MLB</h2>
-                    <%= render 'team', roster: FantasyTeam.first.roster("MLB") %>
-                    <hr>
-                    <h2>NHL</h2>
-                    <%= render 'team', roster: FantasyTeam.first.roster("NHL") %>
-                </div>
+                <% if user_signed_in? %>
+                    <div id="team-tab" class="tab-pane fade">
+                        <h2>NFL</h2>
+                        <%= render 'team', roster: current_user.fantasy_team.roster("NFL") %>
+                        <hr>
+                        <h2>NBA</h2>
+                        <%= render 'team', roster: current_user.fantasy_team.roster("NBA") %>
+                        <hr>
+                        <h2>MLB</h2>
+                        <%= render 'team', roster: current_user.fantasy_team.roster("MLB") %>
+                        <hr>
+                        <h2>NHL</h2>
+                        <%= render 'team', roster: current_user.fantasy_team.roster("NHL") %>
+                    </div>
+                <% end %>
             </div>
         </div>
     </div>

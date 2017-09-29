@@ -18,10 +18,21 @@
       <div class="navbar-header">
         <a class="navbar-brand" href="#">FSFootball Draft</a>
       </div>
+      <div class="navbar-header button">
+        <% if user_signed_in? %>
+          <%= button_to('Logout', destroy_user_session_path, method: :delete, class: "btn btn-primary") %>
+        <% else %>
+          <%= button_to('Register', new_user_registration_path, method: :get, class: "btn btn-primary")  %>
+        <% end %>
+      </div>
     </div>
   </nav>
   <div class="container-fluid">
     <div id="errors">
+      <% flash.each do |key, value| %>
+          <div class="alert alert-dismissable alert-<%= key %>"><%= value %><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>
+
+        <% end %>
     </div>
     <%= yield %>
   </div>

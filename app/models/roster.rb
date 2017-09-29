@@ -38,8 +38,6 @@ class Roster < ApplicationRecord
             if spot.position_overlap(position) and !spot.player
                 return spot
             end
-            puts spot.position
-            puts position
         end
         return nil
     end
